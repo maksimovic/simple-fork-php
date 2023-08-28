@@ -30,7 +30,7 @@ jobs:
           configuration: phpunit.xml
           php_extensions: xdebug
           version: 9
-          args: test --coverage-clover ./coverage.xml
+          args: tests --coverage-clover ./coverage.xml
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3

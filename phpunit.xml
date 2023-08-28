@@ -1,4 +1,9 @@
 <phpunit bootstrap="vendor/autoload.php">
+    <coverage>
+        <include>
+            <directory suffix=".php">src/</directory>
+        </include>
+    </coverage>
     <testsuites>
         <testsuite name="tests">
             <directory>tests</directory>

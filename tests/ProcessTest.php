@@ -29,7 +29,7 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->wait();
         $this->assertEquals(255, $process->errno());
-        $this->assertEquals("Unknown error 255", $process->errmsg());
+        $this->assertEquals("Unknown error: 255", $process->errmsg());
     }
 
     public function testShutdown()
@@ -58,9 +58,8 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $this->process_thread->start();
         $this->process_thread->wait();
         $this->assertEquals(0, $this->process_thread->errno());
-        $this->assertEquals($this->process_thread->errno(), 0);
-        $this->assertEquals($this->process_thread->errmsg(), 'Success');
-        $this->assertEquals($this->process_thread->isRunning(), false);
+        $this->assertEquals('Success', $this->process_thread->errmsg());
+        $this->assertFalse($this->process_thread->isRunning());
 
         $this->process_runnable->start();
         $this->process_runnable->wait();

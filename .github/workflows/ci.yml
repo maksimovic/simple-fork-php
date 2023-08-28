@@ -28,7 +28,7 @@ jobs:
         with:
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
-          php_extensions: xdebug
+          php_extensions: xdebug sysvshm pcntl sysvsem sysvmsg redis
           version: 9
           args: tests --coverage-clover ./coverage.xml
 

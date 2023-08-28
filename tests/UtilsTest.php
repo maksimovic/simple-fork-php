@@ -7,6 +7,11 @@
  */
 class UtilsTest extends \PHPUnit\Framework\TestCase
 {
+
+    /**
+     * @return void
+     * @doesNotPerformAssertions
+     */
     public function testCheck()
     {
         $process = new UtilsTestProcess();

@@ -6,10 +6,10 @@
  * Date: 2016/6/22
  * Time: 16:22
  */
-class FileCacheTest extends PHPUnit_Framework_TestCase
+class FileCacheTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function additionProvider()
+    public static function additionProvider()
     {
         return array(
             array("/tmp/cache1", "key1", "value1"),

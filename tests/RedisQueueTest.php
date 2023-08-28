@@ -6,7 +6,7 @@
  * Date: 2015/10/26
  * Time: 17:18
  */
-class RedisQueueTest extends PHPUnit_Framework_TestCase
+class RedisQueueTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Queue\RedisQueue

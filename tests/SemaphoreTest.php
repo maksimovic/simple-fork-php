@@ -6,19 +6,19 @@
  * Date: 2015/10/26
  * Time: 15:06
  */
-class SemaphoreTest extends PHPUnit_Framework_TestCase
+class SemaphoreTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Lock\Semaphore
      */
     protected $lock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->lock = \Jenner\SimpleFork\Lock\Semaphore::create("test");
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->lock);
     }
@@ -31,14 +31,14 @@ class SemaphoreTest extends PHPUnit_Framework_TestCase
 
     public function testAcquireException()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException(RuntimeException::class);
         $this->lock->acquire();
         $this->lock->acquire();
     }
 
     public function testReleaseException()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException(RuntimeException::class);
         $this->lock->release();
     }
 

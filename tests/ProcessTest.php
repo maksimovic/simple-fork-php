@@ -6,7 +6,7 @@
  * Date: 2015/10/8
  * Time: 16:45
  */
-class ProcessTest extends PHPUnit_Framework_TestCase
+class ProcessTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Process

@@ -6,19 +6,19 @@
  * Date: 2015/10/26
  * Time: 14:56
  */
-class FileLockTest extends PHPUnit_Framework_TestCase
+class FileLockTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Lock\FileLock
      */
     protected $lock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->lock = \Jenner\SimpleFork\Lock\FileLock::create(__FILE__);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->lock);
     }
@@ -31,14 +31,14 @@ class FileLockTest extends PHPUnit_Framework_TestCase
 
     public function testAcquireException()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException(RuntimeException::class);
         $this->lock->acquire();
         $this->lock->acquire();
     }
 
     public function testReleaseException()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException(RuntimeException::class);
         $this->lock->release();
     }
 

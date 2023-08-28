@@ -6,7 +6,7 @@
  * @license https://opensource.org/licenses/MIT MIT
  * @datetime: 2015/11/24 17:00
  */
-class PipeTest extends PHPUnit_Framework_TestCase
+class PipeTest extends \PHPUnit\Framework\TestCase
 {
     public function testRead()
     {

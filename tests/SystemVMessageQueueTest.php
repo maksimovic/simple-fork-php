@@ -6,7 +6,7 @@
  * Date: 2015/10/26
  * Time: 17:24
  */
-class SystemVMessageQueueTest extends PHPUnit_Framework_TestCase
+class SystemVMessageQueueTest extends \PHPUnit\Framework\TestCase
 {
 //    public function testAll()
 //    {

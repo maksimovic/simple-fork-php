@@ -50,7 +50,7 @@ class Semaphore implements LockInterface
         $md5 = md5($identifier);
         $key = 0;
         for ($i = 0; $i < 32; $i++) {
-            $key += ord($md5{$i}) * $i;
+            $key += ord($md5[$i]) * $i;
         }
         return $key;
     }

@@ -6,7 +6,7 @@
  * Date: 2015/10/23
  * Time: 16:58
  */
-class PoolTest extends PHPUnit_Framework_TestCase
+class PoolTest extends \PHPUnit\Framework\TestCase
 {
     public function testMethods()
     {

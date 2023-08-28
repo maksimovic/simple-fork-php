@@ -6,7 +6,7 @@
  * Date: 2015/10/26
  * Time: 14:50
  */
-class RedisCacheTest extends PHPUnit_Framework_TestCase
+class RedisCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Cache\RedisCache

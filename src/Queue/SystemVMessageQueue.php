@@ -282,12 +282,4 @@ class SystemVMessageQueue implements QueueInterface
     {
         $this->initQueue($this->ipc_filename, $this->msg_type);
     }
-
-    /**
-     *
-     */
-    public function __destruct()
-    {
-        unset($this);
-    }
 }

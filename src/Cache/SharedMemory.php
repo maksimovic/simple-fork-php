@@ -18,7 +18,7 @@ class SharedMemory implements CacheInterface
 {
     /**
      * holds shared memory resource
-     * @var resource
+     * @var resource|\SysvSharedMemory
      */
     protected $shm;
 
@@ -38,7 +38,7 @@ class SharedMemory implements CacheInterface
      * @param int $size memory size
      * @param string $file
      */
-    public function __construct($size = 33554432, $file = __FILE__)
+    public function __construct($size = 4194304, $file = __FILE__)
     {
         $this->size = $size;
         if (function_exists("shm_attach") === false) {

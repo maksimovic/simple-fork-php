@@ -5,7 +5,7 @@
  * @license https://opensource.org/licenses/MIT MIT
  * @datetime: 2015/11/11 17:59
  */
-class UtilsTest extends PHPUnit_Framework_TestCase
+class UtilsTest extends \PHPUnit\Framework\TestCase
 {
     public function testCheck()
     {
@@ -14,7 +14,7 @@ class UtilsTest extends PHPUnit_Framework_TestCase
     }
 
     public function testError(){
-        $this->setExpectedException("RuntimeException");
+        $this->expectException(RuntimeException::class);
         \Jenner\SimpleFork\Utils::checkOverwriteRunMethod(get_class(new \Jenner\SimpleFork\Process()));
     }
 }

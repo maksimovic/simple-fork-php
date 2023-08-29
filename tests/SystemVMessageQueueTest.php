@@ -8,15 +8,6 @@
  */
 class SystemVMessageQueueTest extends \PHPUnit\Framework\TestCase
 {
-//    public function testAll()
-//    {
-//        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
-//        $this->assertTrue($queue->put(1, 'test'));
-//        $this->assertEquals($queue->size(1), 1);
-//        $this->assertEquals($queue->get(1), 'test');
-//        unset($queue);
-//    }
-
     public function testCommunication()
     {
         $process = new \Jenner\SimpleFork\Process(function () {
@@ -25,8 +16,62 @@ class SystemVMessageQueueTest extends \PHPUnit\Framework\TestCase
         });
         $process->start();
         $process->wait();
+
         $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
         $this->assertEquals(1, $queue->size());
         $this->assertEquals('test', $queue->get());
+
+        $this->assertFalse($queue->queueExists(1));
     }
+
+    /**
+     * @doesNotPerformAssertions
+     * @return void
+     */
+    public function testInitWithNewFile()
+    {
+        new \Jenner\SimpleFork\Queue\SystemVMessageQueue("/tmp".tempnam("/tmp", ""));
+    }
+    
+    public function testNothingInQueue()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
+
+        $this->assertFalse($queue->get());
+    }
+    
+    public function testPut()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
+
+        $this->assertTrue($queue->put("test"));
+    }
+    
+    public function testSetMsgBytesWithoutRoot()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
+
+        $this->expectException(RuntimeException::class);
+        $queue->setStatus('msg_qbytes', 5);
+    }
+    
+    public function testSetMaxQueueSizeWithoutRoot()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
+
+        $this->expectException(Exception::class);
+        $queue->setMaxQueueSize(5);
+    }
+    
+    public function testSetStatus(): void
+    {
+        $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
+        $this->assertTrue($queue->setStatus('msg_perm.mode', 1));
+    }
+
+    public function tearDown(): void
+    {
+        (new \Jenner\SimpleFork\Queue\SystemVMessageQueue())->remove();
+    }
+
 }

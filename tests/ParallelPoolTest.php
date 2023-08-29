@@ -6,30 +6,30 @@
  * Date: 2015/11/2
  * Time: 18:06
  */
-class ParallelPoolTest extends PHPUnit_Framework_TestCase
+class ParallelPoolTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         $pool = new \Jenner\SimpleFork\ParallelPool(new ParallelPoolTestRunnable(), 10);
         $pool->start();
         $this->assertEquals(10, $pool->aliveCount());
-        sleep(4);
+        sleep(2);
         $this->assertEquals(0, $pool->aliveCount());
         $pool->keep();
         $this->assertEquals(10, $pool->count());
         $this->assertEquals(10, $pool->aliveCount());
-        $pool->wait(true);
+        $pool->wait();
     }
 
     public function testException()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
         $pool = new \Jenner\SimpleFork\ParallelPool('test');
     }
 
     public function testReload()
     {
-        $pool = new \Jenner\SimpleFork\ParallelPool(new ParallelPoolTestRunnable(), 10);
+        $pool = \Jenner\SimpleFork\PoolFactory::newParallelPool(new ParallelPoolTestRunnable(), 10);
         $pool->start();
         $this->assertEquals(10, $pool->aliveCount());
         $old_processes = $pool->getProcesses();
@@ -55,6 +55,6 @@ class ParallelPoolTestRunnable implements \Jenner\SimpleFork\Runnable
      */
     public function run()
     {
-        sleep(3);
+        sleep(1);
     }
 }

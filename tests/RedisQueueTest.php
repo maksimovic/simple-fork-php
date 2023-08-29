@@ -6,7 +6,7 @@
  * Date: 2015/10/26
  * Time: 17:18
  */
-class RedisQueueTest extends PHPUnit_Framework_TestCase
+class RedisQueueTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Queue\RedisQueue
@@ -20,8 +20,8 @@ class RedisQueueTest extends PHPUnit_Framework_TestCase
         }
         $this->queue = new \Jenner\SimpleFork\Queue\RedisQueue();
         $this->assertTrue($this->queue->put('test'));
-        $this->assertEquals($this->queue->get(), 'test');
-        $this->assertEquals($this->queue->size(), 0);
+        $this->assertEquals('test', $this->queue->get());
+        $this->assertEquals(0, $this->queue->size());
         $this->queue->close();
     }
 
@@ -38,9 +38,40 @@ class RedisQueueTest extends PHPUnit_Framework_TestCase
         $process->start();
         $process->wait();
         $queue = new \Jenner\SimpleFork\Queue\RedisQueue();
-        $this->assertEquals($queue->size(), 1);
-        $this->assertEquals($queue->get(), 'test');
+        $this->assertEquals(1, $queue->size());
+        $this->assertEquals('test', $queue->get());
         $queue->close();
+    }
+
+    public function testRemove()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\RedisQueue();
+        $queue->put("test");
+        $this->assertEquals(1, $queue->remove());
+        $queue->close();
+    }
+
+    public function testCantConnect()
+    {
+        $this->expectException(RedisException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 1234);
+    }
+
+    public function testCantSelectDatabase(): void
+    {
+        $this->expectException(RuntimeException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 6379, -1);
+    }
+
+    public function testEmptyChannel(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 6379, 0, '');
+    }
+
+    public function tearDown(): void
+    {
+        (new \Jenner\SimpleFork\Queue\RedisQueue())->remove();
     }
 
 }

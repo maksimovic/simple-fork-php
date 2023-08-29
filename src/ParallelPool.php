@@ -30,7 +30,7 @@ class ParallelPool extends AbstractPool
      * @param callable|Runnable $callback
      * @param int $max
      */
-    public function __construct($callback, $max = 4)
+    public function __construct($callback, int $max = 4)
     {
         if (!is_callable($callback) && !($callback instanceof Runnable)) {
             throw new \InvalidArgumentException('callback must be a callback function or a object of Runnalbe');
@@ -47,7 +47,7 @@ class ParallelPool extends AbstractPool
      *
      * @param bool $block
      */
-    public function reload($block = true)
+    public function reload(bool $block = true): void
     {
         $old_processes = $this->processes;
         for ($i = 0; $i < $this->max; $i++) {
@@ -70,7 +70,7 @@ class ParallelPool extends AbstractPool
      * to keep the sub process count all the time
      * @param int $interval check time interval
      */
-    public function keep($block = false, $interval = 100)
+    public function keep(bool $block = false, int $interval = 100): void
     {
         do {
             $this->start();
@@ -90,7 +90,7 @@ class ParallelPool extends AbstractPool
     /**
      * start the pool
      */
-    public function start()
+    public function start(): void
     {
         $alive_count = $this->aliveCount();
         // create sub process and run

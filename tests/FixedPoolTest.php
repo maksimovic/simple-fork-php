@@ -6,7 +6,7 @@
  * @datetime: 2015/11/23 15:04
  */
 
-class FixedPoolTest extends PHPUnit_Framework_TestCase
+class FixedPoolTest extends \PHPUnit\Framework\TestCase
 {
     public function testAliveCount(){
         $pool = \Jenner\SimpleFork\PoolFactory::newFixedPool(4);
@@ -40,6 +40,6 @@ class FixedPoolTestProcess extends \Jenner\SimpleFork\Process
      */
     public function run()
     {
-        sleep(3);
+        sleep(1);
     }
 }

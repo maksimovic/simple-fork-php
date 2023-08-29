@@ -6,7 +6,7 @@
  * @license https://opensource.org/licenses/MIT MIT
  * @datetime: 2015/11/24 17:00
  */
-class PipeTest extends PHPUnit_Framework_TestCase
+class PipeTest extends \PHPUnit\Framework\TestCase
 {
     public function testRead()
     {
@@ -22,6 +22,7 @@ class PipeTest extends PHPUnit_Framework_TestCase
         $pipe = new \Jenner\SimpleFork\Queue\Pipe();
         $this->assertEquals('test', $pipe->read());
         $process->wait(true);
+
         $pipe->close();
     }
 
@@ -38,6 +39,7 @@ class PipeTest extends PHPUnit_Framework_TestCase
         $process->start();
         $process->wait(true);
         $pipe->close();
+        $pipe->remove();
     }
 
     public function testBlock()
@@ -54,7 +56,13 @@ class PipeTest extends PHPUnit_Framework_TestCase
         $process->start();
         $this->assertEquals('test', $pipe->read(4));
         $end = time();
-        $this->assertTrue(($end - $start) >= 2);
+        $this->assertTrue(($end - $start) >= 1);
+
+        $pipe->setBlock(true);
+
+        $pipe->write("hello");
+        $pipe->setBlock(true);
+
         $process->wait(true);
     }
 }

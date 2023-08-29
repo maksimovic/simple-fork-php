@@ -15,24 +15,23 @@ namespace Jenner\SimpleFork\Cache;
  */
 interface CacheInterface
 {
-
     /**
      * get var
      *
-     * @param $key
-     * @param null $default
-     * @return bool|mixed
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
      */
-    public function get($key, $default = null);
+    public function get(string $key, $default = null);
 
     /**
      * set var
      *
-     * @param $key
+     * @param string $key
      * @param null $value
-     * @return
+     * @return mixed
      */
-    public function set($key, $value);
+    public function set(string $key, $value);
 
     /**
      * has var ?
@@ -40,14 +39,14 @@ interface CacheInterface
      * @param $key
      * @return bool
      */
-    public function has($key);
+    public function has($key): bool;
 
     /**
      * delete var
      *
-     * @param $key
+     * @param string $key
      * @return bool
      */
-    public function delete($key);
+    public function delete(string $key): bool;
 
 }

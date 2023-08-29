@@ -22,7 +22,7 @@ class SystemVMessageQueue implements QueueInterface
     protected $msg_type;
 
     /**
-     * @var
+     * @var false|resource|\SysvMessageQueue
      */
     protected $queue;
 
@@ -47,7 +47,7 @@ class SystemVMessageQueue implements QueueInterface
     protected $maxsize;
 
     /**
-     * @var
+     * @var int
      */
     protected $key_t;
 
@@ -68,12 +68,12 @@ class SystemVMessageQueue implements QueueInterface
      * @param int $maxsize the max size of queue
      */
     public function __construct(
-        $ipc_filename = __FILE__,
-        $channel = 1,
-        $serialize_needed = true,
-        $block_send = true,
-        $option_receive = MSG_IPC_NOWAIT,
-        $maxsize = 100000
+        string $ipc_filename = __FILE__,
+        int $channel = 1,
+        bool $serialize_needed = true,
+        bool $block_send = true,
+        int $option_receive = MSG_IPC_NOWAIT,
+        int $maxsize = 100000
     )
     {
         $this->ipc_filename = $ipc_filename;
@@ -110,7 +110,9 @@ class SystemVMessageQueue implements QueueInterface
         if (!file_exists($ipc_filename)) {
             $create_file = touch($ipc_filename);
             if ($create_file === false) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException('ipc_file is not exists and create failed');
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -124,9 +126,9 @@ class SystemVMessageQueue implements QueueInterface
      * get message
      *
      * @param bool $block if block when the queue is empty
-     * @return bool|string
+     * @return mixed
      */
-    public function get($block = false)
+    public function get(bool $block = false)
     {
         $queue_status = $this->status();
         if ($queue_status['msg_qnum'] > 0) {
@@ -143,18 +145,19 @@ class SystemVMessageQueue implements QueueInterface
                 ) === true
             ) {
                 return $data;
-            } else {
-                throw new \RuntimeException($err);
             }
-        } else {
-            return false;
+
+            // @codeCoverageIgnoreStart
+            throw new \RuntimeException($err);
+            // @codeCoverageIgnoreEnd
         }
+
+        return false;
     }
 
     public function status()
     {
-        $queue_status = \msg_stat_queue($this->queue);
-        return $queue_status;
+        return \msg_stat_queue($this->queue);
     }
 
     /*
@@ -177,17 +180,19 @@ class SystemVMessageQueue implements QueueInterface
     /**
      * put message
      *
-     * @param $message
+     * @param $value
      * @return bool
      * @throws \Exception
      */
-    public function put($message)
+    public function put($value): bool
     {
-        if (!\msg_send($this->queue, $this->msg_type, $message, $this->serialize_needed, $this->block_send, $err) === true) {
-            throw new \RuntimeException($err);
+        if (\msg_send($this->queue, $this->msg_type, $value, $this->serialize_needed, $this->block_send, $err)) {
+            return true;
         }
 
-        return true;
+        // @codeCoverageIgnoreStart
+        throw new \RuntimeException($err);
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -210,12 +215,19 @@ class SystemVMessageQueue implements QueueInterface
      * @param int $value status value
      * @return bool
      */
-    public function setStatus($key, $value)
+    public function setStatus(string $key, $value): bool
     {
         $this->checkSetPrivilege($key);
-        if ($key == 'msg_qbytes')
+
+        if ($key === 'msg_qbytes') {
+            // @codeCoverageIgnoreStart
             return $this->setMaxQueueSize($value);
-        $queue_status[$key] = $value;
+            // @codeCoverageIgnoreEnd
+        }
+
+        $queue_status = [
+            $key => $value
+        ];
 
         return \msg_set_queue($this->queue, $queue_status);
     }
@@ -251,7 +263,9 @@ class SystemVMessageQueue implements QueueInterface
         if ($user !== 'root')
             throw new \Exception('changing msg_qbytes needs root privileges');
 
+        // @codeCoverageIgnoreStart
         return $this->setStatus('msg_qbytes', $size);
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -273,21 +287,5 @@ class SystemVMessageQueue implements QueueInterface
     public function queueExists($key)
     {
         return \msg_queue_exists($key);
-    }
-
-    /**
-     * init when wakeup
-     */
-    public function __wakeup()
-    {
-        $this->initQueue($this->ipc_filename, $this->msg_type);
-    }
-
-    /**
-     *
-     */
-    public function __destruct()
-    {
-        unset($this);
     }
 }

@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork\Queue;
 
-
 class Pipe
 {
     /**
@@ -36,32 +35,40 @@ class Pipe
      * @param int $mode
      * @param bool $block if blocking
      */
-    public function __construct($filename = '/tmp/simple-fork.pipe', $mode = 0666, $block = false)
+    public function __construct(string $filename = '/tmp/simple-fork.pipe', int $mode = 0666, bool $block = false)
     {
         if (!file_exists($filename) && !posix_mkfifo($filename, $mode)) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('create pipe failed');
+            // @codeCoverageIgnoreEnd
         }
-        if (filetype($filename) != 'fifo') {
+        if (filetype($filename) !== 'fifo') {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('file exists and it is not a fifo file');
+            // @codeCoverageIgnoreEnd
         }
 
         $this->filename = $filename;
         $this->block = $block;
     }
 
-    public function setBlock($block = true)
+    public function setBlock(bool $block = true)
     {
         if (is_resource($this->read)) {
             $set = stream_set_blocking($this->read, $block);
             if (!$set) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException('stream_set_blocking failed');
+                // @codeCoverageIgnoreEnd
             }
         }
 
         if (is_resource($this->write)) {
             $set = stream_set_blocking($this->write, $block);
             if (!$set) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException('stream_set_blocking failed');
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -73,19 +80,23 @@ class Pipe
      * it will not return until the data size is equal to the value of param size
      *
      * @param int $size
-     * @return string
+     * @return string|false
      */
-    public function read($size = 1024)
+    public function read(int $size = 1024)
     {
         if (!is_resource($this->read)) {
             $this->read = fopen($this->filename, 'r+');
             if (!is_resource($this->read)) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException('open file failed');
+                // @codeCoverageIgnoreEnd
             }
             if (!$this->block) {
                 $set = stream_set_blocking($this->read, false);
                 if (!$set) {
+                    // @codeCoverageIgnoreStart
                     throw new \RuntimeException('stream_set_blocking failed');
+                    // @codeCoverageIgnoreEnd
                 }
             }
         }
@@ -94,20 +105,24 @@ class Pipe
     }
 
     /**
-     * @param $message
-     * @return int
+     * @param string $message
+     * @return false|int
      */
-    public function write($message)
+    public function write(string $message)
     {
         if (!is_resource($this->write)) {
             $this->write = fopen($this->filename, 'w+');
             if (!is_resource($this->write)) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException('open file failed');
+                // @codeCoverageIgnoreEnd
             }
             if (!$this->block) {
                 $set = stream_set_blocking($this->write, false);
                 if (!$set) {
+                    // @codeCoverageIgnoreStart
                     throw new \RuntimeException('stream_set_blocking failed');
+                    // @codeCoverageIgnoreEnd
                 }
             }
         }
@@ -115,18 +130,12 @@ class Pipe
         return fwrite($this->write, $message);
     }
 
-    /**
-     *
-     */
     public function __destruct()
     {
         $this->close();
     }
 
-    /**
-     *
-     */
-    public function close()
+    public function close(): void
     {
         if (is_resource($this->read)) {
             fclose($this->read);
@@ -136,7 +145,7 @@ class Pipe
         }
     }
 
-    public function remove()
+    public function remove(): bool
     {
         return unlink($this->filename);
     }

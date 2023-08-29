@@ -39,9 +39,6 @@ class RedisCache implements CacheInterface
     {
         $this->redis = new \Redis();
         $connection_result = $this->redis->connect($host, $port);
-        if (!$connection_result) {
-            throw new \RuntimeException('can not connect to the redis server');
-        }
 
         if ($database != 0) {
             $select_result = $this->redis->select($database);
@@ -75,11 +72,11 @@ class RedisCache implements CacheInterface
     /**
      * get var
      *
-     * @param $key
-     * @param null $default
-     * @return bool|string|null
+     * @param string $key
+     * @param null|mixed $default
+     * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         $result = $this->redis->hGet($this->prefix, $key);
         if ($result !== false) return $result;
@@ -90,11 +87,11 @@ class RedisCache implements CacheInterface
     /**
      * set var
      *
-     * @param $key
+     * @param string $key
      * @param null $value
      * @return boolean
      */
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         return $this->redis->hSet($this->prefix, $key, $value);
     }
@@ -105,7 +102,7 @@ class RedisCache implements CacheInterface
      * @param $key
      * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         return $this->redis->hExists($this->prefix, $key);
     }
@@ -113,14 +110,11 @@ class RedisCache implements CacheInterface
     /**
      * delete var
      *
-     * @param $key
+     * @param string $key
      * @return bool
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
-        if ($this->redis->hDel($this->prefix, $key) > 0) {
-            return true;
-        }
-        return false;
+        return $this->redis->hDel($this->prefix, $key) > 0;
     }
 }

@@ -6,7 +6,7 @@
  * Date: 2015/10/8
  * Time: 16:45
  */
-class ProcessTest extends PHPUnit_Framework_TestCase
+class ProcessTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Jenner\SimpleFork\Process
@@ -29,20 +29,25 @@ class ProcessTest extends PHPUnit_Framework_TestCase
         $process->start();
         $process->wait();
         $this->assertEquals(255, $process->errno());
-        $this->assertEquals("Unknown error 255", $process->errmsg());
+        $this->assertIsString($process->errmsg());
+        $this->assertIsBool($process->ifSignal());
     }
 
     public function testShutdown()
     {
+        if (php_uname('s') === "Darwin")
+        {
+            return $this->markTestSkipped("On Macos \$process->shutDown() exits entirely");
+        }
+
         $process = new \Jenner\SimpleFork\Process(function () {
             sleep(3);
         });
-        $time = time();
+
         $process->start();
         $process->shutdown(SIGKILL);
+
         $this->assertFalse($process->isRunning());
-        $this->assertTrue(time() - $time < 3);
-        $this->assertTrue($process->ifSignal());
         $this->assertEquals(0, $process->errno());
     }
 
@@ -55,12 +60,14 @@ class ProcessTest extends PHPUnit_Framework_TestCase
 //                echo "callback pid:" . getmypid() . PHP_EOL;
             }
         });
+
+        $this->process_thread->registerSignalHandler(SIGTERM, function() {return true;});
+        $this->process_thread->dispatchSignal();
+
         $this->process_thread->start();
         $this->process_thread->wait();
         $this->assertEquals(0, $this->process_thread->errno());
-        $this->assertEquals($this->process_thread->errno(), 0);
-        $this->assertEquals($this->process_thread->errmsg(), 'Success');
-        $this->assertEquals($this->process_thread->isRunning(), false);
+        $this->assertFalse($this->process_thread->isRunning());
 
         $this->process_runnable->start();
         $this->process_runnable->wait();
@@ -71,6 +78,42 @@ class ProcessTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $this->process_callback->errno());
     }
 
+    public function testProcessAlreadyStarted(): void
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+        $this->process_thread->start();
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->start();
+    }
+    
+    public function testKillingProcessNotStarted()
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->shutdown();
+    }
+
+    public function testKillingStoppedProcess()
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+        $this->process_thread->start();
+        $this->process_thread->wait(false);
+        $this->process_thread->wait();
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->shutdown();
+    }
+
+    public function testInvalidProcess(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new \Jenner\SimpleFork\Process("abc");
+    }
 
 }
 

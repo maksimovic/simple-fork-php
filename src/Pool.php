@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 /**
  * pool
  *
@@ -24,7 +23,7 @@ class Pool extends AbstractPool
      * @param null|string $name process name
      * @return int
      */
-    public function execute(Process $process, $name = null)
+    public function execute(Process $process, ?string $name = null)
     {
         if (!is_null($name)) {
             $process->name($name);

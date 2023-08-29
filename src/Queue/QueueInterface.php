@@ -19,16 +19,16 @@ interface QueueInterface
     /**
      * put value into the queue of channel
      *
-     * @param $value
+     * @param mixed $value
      * @return bool
      */
-    public function put($value);
+    public function put($value): bool;
 
     /**
      * get value from the queue of channel
      *
      * @param bool $block if block when the queue is empty
-     * @return bool|string
+     * @return mixed
      */
-    public function get($block = false);
+    public function get(bool $block = false);
 }

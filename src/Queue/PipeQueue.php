@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Jenner <hypxm@qq.com>
  * @blog http://www.huyanping.cn
@@ -24,9 +25,8 @@ class PipeQueue implements QueueInterface
     /**
      * @param string $filename fifo filename
      * @param int $mode
-     * @param bool $block if blocking
      */
-    public function __construct($filename = '/tmp/simple-fork.pipe', $mode = 0666)
+    public function __construct(string $filename = '/tmp/simple-fork.pipe', int $mode = 0666)
     {
         $this->pipe = new Pipe($filename, $mode);
         $this->block = false;
@@ -39,25 +39,28 @@ class PipeQueue implements QueueInterface
      * @param $value
      * @return bool
      */
-    public function put($value)
+    public function put($value): bool
     {
         $len = strlen($value);
+
         if ($len > 2147483647) {
             throw new \RuntimeException('value is too long');
         }
+
         $raw = pack('N', $len) . $value;
+
         $write_len = $this->pipe->write($raw);
 
-        return $write_len == strlen($raw);
+        return $write_len === strlen($raw);
     }
 
     /**
      * get value from the queue of channel
      *
      * @param bool $block if block when the queue is empty
-     * @return bool|string
+     * @return mixed
      */
-    public function get($block = false)
+    public function get(bool $block = false)
     {
         if ($this->block != $block) {
             $this->pipe->setBlock($block);
@@ -75,17 +78,19 @@ class PipeQueue implements QueueInterface
         if (empty($len) || !array_key_exists(1, $len) || empty($len[1])) {
             throw new \RuntimeException('data protocol error');
         }
-        $len = intval($len[1]);
+        $len = (int) $len[1];
 
         $value = '';
         while (true) {
             $temp = $this->pipe->read($len);
-            if (strlen($temp) == $len) {
+            if (strlen($temp) === $len) {
                 return $temp;
             }
+
             $value .= $temp;
             $len -= strlen($temp);
-            if ($len == 0) {
+
+            if ($len === 0) {
                 return $value;
             }
         }
@@ -93,10 +98,8 @@ class PipeQueue implements QueueInterface
 
     /**
      * remove the queue resource
-     *
-     * @return bool
      */
-    public function remove()
+    public function remove(): void
     {
         $this->pipe->close();
         $this->pipe->remove();

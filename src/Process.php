@@ -72,12 +72,12 @@ class Process
 
 
     /**
-     * @param string $execution it can be a Runnable object, callback function or null
-     * @param null $name process name,you can manager the process by it's name.
+     * @param string|callable|null $execution it can be a Runnable object, callback function or null
+     * @param string|null $name process name,you can manager the process by it's name.
      */
-    public function __construct($execution = null, $name = null)
+    public function __construct($execution = null, string $name = null)
     {
-        if (!is_null($execution) && $execution instanceof Runnable) {
+        if ($execution instanceof Runnable) {
             $this->runnable = $execution;
         } elseif (!is_null($execution) && is_callable($execution)) {
             $this->runnable = $execution;
@@ -96,7 +96,7 @@ class Process
     /**
      * init process status
      */
-    protected function initStatus()
+    protected function initStatus(): void
     {
         $this->pid = null;
         $this->running = null;
@@ -181,12 +181,9 @@ class Process
     }
 
     /**
-     * start the sub process
-     * and run the callback
-     *
-     * @return string pid
+     * start the sub process and run the callback
      */
-    public function start()
+    public function start(): void
     {
         if (!empty($this->pid) && $this->isRunning()) {
             throw new \LogicException("the process is already running");
@@ -197,7 +194,9 @@ class Process
         $pid = pcntl_fork();
         if ($pid < 0) {
             throw new \RuntimeException("fork error");
-        } elseif ($pid > 0) {
+        }
+
+        if ($pid > 0) {
             $this->pid = $pid;
             $this->running = true;
             $this->started = true;

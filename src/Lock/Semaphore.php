@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork\Lock;
 
-
 /**
  * sem lock
  *
@@ -16,10 +15,8 @@ namespace Jenner\SimpleFork\Lock;
  */
 class Semaphore implements LockInterface
 {
-    /**
-     * @var
-     */
     private $lock_id;
+
     /**
      * @var bool
      */
@@ -28,14 +25,16 @@ class Semaphore implements LockInterface
     /**
      * init a lock
      *
-     * @param $key
-     * @param $count
+     * @param string $key
+     * @param int $count
      * @throws \RuntimeException
      */
-    private function __construct($key, $count = 1)
+    private function __construct(string $key, int $count = 1)
     {
         if (($this->lock_id = sem_get($this->_stringToSemKey($key), $count)) === false) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException("Cannot create semaphore for key: {$key}");
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -50,7 +49,7 @@ class Semaphore implements LockInterface
         $md5 = md5($identifier);
         $key = 0;
         for ($i = 0; $i < 32; $i++) {
-            $key += ord($md5{$i}) * $i;
+            $key += ord($md5[$i]) * $i;
         }
         return $key;
     }
@@ -83,7 +82,7 @@ class Semaphore implements LockInterface
      *
      * @return bool
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked === true ? true : false;
     }
@@ -94,14 +93,16 @@ class Semaphore implements LockInterface
      * @return bool
      * @throws \RuntimeException
      */
-    public function release()
+    public function release(): bool
     {
         if (!$this->locked) {
             throw new \RuntimeException("release a non lock");
         }
 
         if (!sem_release($this->lock_id)) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->locked = false;
 
@@ -114,16 +115,13 @@ class Semaphore implements LockInterface
      * @param bool $blocking
      * @return bool
      */
-    public function acquire($blocking = true)
+    public function acquire(bool $blocking = true): bool
     {
         if ($this->locked) {
             throw new \RuntimeException('already lock by yourself');
         }
 
         if ($blocking === false) {
-            if (version_compare(PHP_VERSION, '5.6.0') < 0) {
-                throw new \RuntimeException('php version is at least 5.6.0 for param blocking');
-            }
             if (!sem_acquire($this->lock_id, true)) {
                 return false;
             }
@@ -133,7 +131,9 @@ class Semaphore implements LockInterface
         }
 
         if (!sem_acquire($this->lock_id)) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->locked = true;
 
@@ -143,6 +143,7 @@ class Semaphore implements LockInterface
     /**
      * remove the semaphore resource
      *
+     * @suppress PhanTypeMismatchArgumentInternalReal
      * @return bool
      */
     public function remove()
@@ -154,10 +155,13 @@ class Semaphore implements LockInterface
             throw new \RuntimeException('can not remove a empty semaphore resource');
         }
 
+        // @codeCoverageIgnoreStart
+        // seems impossible to reproduce further below
         if (!sem_release($this->lock_id)) {
             return false;
         }
 
         return true;
+        // @codeCoverageIgnoreEnd
     }
 }

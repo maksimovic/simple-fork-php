@@ -113,7 +113,7 @@ class RedisQueue implements QueueInterface
      */
     public function size()
     {
-        return $this->redis->lSize($this->channel);
+        return $this->redis->lLen($this->channel);
     }
 
     /**
@@ -123,7 +123,7 @@ class RedisQueue implements QueueInterface
      */
     public function remove()
     {
-        return $this->redis->delete($this->channel);
+        return $this->redis->del($this->channel);
     }
 
     /**

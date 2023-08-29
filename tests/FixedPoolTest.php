@@ -40,6 +40,6 @@ class FixedPoolTestProcess extends \Jenner\SimpleFork\Process
      */
     public function run()
     {
-        sleep(3);
+        sleep(1);
     }
 }

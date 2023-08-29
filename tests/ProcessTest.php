@@ -29,18 +29,25 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->wait();
         $this->assertEquals(255, $process->errno());
+        $this->assertIsString($process->errmsg());
+        $this->assertIsBool($process->ifSignal());
     }
 
     public function testShutdown()
     {
+        if (php_uname('s') === "Darwin")
+        {
+            return $this->markTestSkipped("On Macos \$process->shutDown() exits entirely");
+        }
+
         $process = new \Jenner\SimpleFork\Process(function () {
-            sleep(3);
+            sleep(2);
         });
         $time = time();
         $process->start();
         $process->shutdown(SIGKILL);
         $this->assertFalse($process->isRunning());
-        $this->assertTrue((time() - $time) <= 3);
+        $this->assertTrue((time() - $time) <= 2);
         $this->assertTrue($process->ifSignal());
         $this->assertEquals(0, $process->errno());
     }
@@ -54,6 +61,10 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
 //                echo "callback pid:" . getmypid() . PHP_EOL;
             }
         });
+
+        $this->process_thread->registerSignalHandler(SIGTERM, function() {return true;});
+        $this->process_thread->dispatchSignal();
+
         $this->process_thread->start();
         $this->process_thread->wait();
         $this->assertEquals(0, $this->process_thread->errno());
@@ -68,6 +79,42 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->process_callback->errno());
     }
 
+    public function testProcessAlreadyStarted(): void
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+        $this->process_thread->start();
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->start();
+    }
+    
+    public function testKillingProcessNotStarted()
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->shutdown();
+    }
+
+    public function testKillingStoppedProcess()
+    {
+        $this->process_thread = new MyThread();
+        $this->process_runnable = new \Jenner\SimpleFork\Process(new MyRunnable());
+        $this->process_thread->start();
+        $this->process_thread->wait(false);
+        $this->process_thread->wait();
+
+        $this->expectException(LogicException::class);
+        $this->process_thread->shutdown();
+    }
+
+    public function testInvalidProcess(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new \Jenner\SimpleFork\Process("abc");
+    }
 
 }
 

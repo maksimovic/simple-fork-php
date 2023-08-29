@@ -12,6 +12,6 @@ class PipeQueueTest extends \PHPUnit\Framework\TestCase
     {
         $queue = new \Jenner\SimpleFork\Queue\PipeQueue();
         $this->assertTrue($queue->put('test'));
-        $this->assertEquals($queue->get(), 'test');
+        $this->assertEquals('test', $queue->get());
     }
 }

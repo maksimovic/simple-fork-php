@@ -18,10 +18,27 @@ class UtilsTest extends \PHPUnit\Framework\TestCase
         \Jenner\SimpleFork\Utils::checkOverwriteRunMethod(get_class($process));
     }
 
+    public function testRunMethodNotImplemented(): void
+    {
+        $this->expectException(RuntimeException::class);
+        \Jenner\SimpleFork\Utils::checkOverwriteRunMethod(get_class(new UtilsTestProcessWithoutRunMethod()));
+    }
+
+    public function testProcessClassNotExtendingAnything(): void
+    {
+        $this->expectException(RuntimeException::class);
+        \Jenner\SimpleFork\Utils::checkOverwriteRunMethod(stdClass::class);
+    }
+
     public function testError(){
         $this->expectException(RuntimeException::class);
         \Jenner\SimpleFork\Utils::checkOverwriteRunMethod(get_class(new \Jenner\SimpleFork\Process()));
     }
+}
+
+class UtilsTestProcessWithoutRunMethod extends \Jenner\SimpleFork\Process
+{
+
 }
 
 class UtilsTestProcess extends \Jenner\SimpleFork\Process

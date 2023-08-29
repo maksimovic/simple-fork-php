@@ -28,7 +28,7 @@ class SharedMemoryTest extends \PHPUnit\Framework\TestCase
         $cache = new \Jenner\SimpleFork\Cache\SharedMemory(1024);
         $cache->set('test', 'test');
         $this->assertTrue($cache->has('test'));
-        $this->assertEquals($cache->get('test'), 'test');
+        $this->assertEquals('test', $cache->get('test'));
         $cache->delete('test');
         $this->assertFalse($cache->has('test'));
     }
@@ -40,7 +40,7 @@ class SharedMemoryTest extends \PHPUnit\Framework\TestCase
         $process = new \Jenner\SimpleFork\Process(function () use ($cache) {
             $cache->remove();
         });
-        $this->assertEquals($cache->get('test'), 'test');
+        $this->assertEquals('test', $cache->get('test'));
         $process->start();
         $process->wait();
 

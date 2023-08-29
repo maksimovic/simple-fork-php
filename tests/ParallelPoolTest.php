@@ -29,7 +29,7 @@ class ParallelPoolTest extends \PHPUnit\Framework\TestCase
 
     public function testReload()
     {
-        $pool = new \Jenner\SimpleFork\ParallelPool(new ParallelPoolTestRunnable(), 10);
+        $pool = \Jenner\SimpleFork\PoolFactory::newParallelPool(new ParallelPoolTestRunnable(), 10);
         $pool->start();
         $this->assertEquals(10, $pool->aliveCount());
         $old_processes = $pool->getProcesses();
@@ -55,6 +55,6 @@ class ParallelPoolTestRunnable implements \Jenner\SimpleFork\Runnable
      */
     public function run()
     {
-        sleep(3);
+        sleep(1);
     }
 }

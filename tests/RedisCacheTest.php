@@ -21,7 +21,7 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
         $this->cache = new Jenner\SimpleFork\Cache\RedisCache();
         $this->cache->set('cache', 'test');
         $this->assertTrue($this->cache->has('cache'));
-        $this->assertEquals($this->cache->get('cache'), 'test');
+        $this->assertEquals('test', $this->cache->get('cache'));
         $this->assertTrue($this->cache->delete('cache'));
         $this->assertNull($this->cache->get('cache'));
         $this->cache->close();

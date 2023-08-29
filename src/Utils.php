@@ -17,7 +17,7 @@ class Utils
      */
     public static function checkOverwriteRunMethod($child_class)
     {
-        $parent_class = '\\Jenner\\SimpleFork\\Process';
+        $parent_class = Process::class;
         if ($child_class == $parent_class) {
             $message = "you should extend the `{$parent_class}`" .
                 ' and overwrite the run method';

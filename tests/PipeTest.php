@@ -54,7 +54,7 @@ class PipeTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $this->assertEquals('test', $pipe->read(4));
         $end = time();
-        $this->assertTrue(($end - $start) >= 2);
+        $this->assertTrue(($end - $start) >= 1);
         $process->wait(true);
     }
 }

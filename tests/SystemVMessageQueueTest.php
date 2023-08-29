@@ -26,7 +26,7 @@ class SystemVMessageQueueTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->wait();
         $queue = new \Jenner\SimpleFork\Queue\SystemVMessageQueue();
-        $this->assertEquals($queue->size(), 1);
-        $this->assertEquals($queue->get(), 'test');
+        $this->assertEquals(1, $queue->size());
+        $this->assertEquals('test', $queue->get());
     }
 }

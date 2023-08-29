@@ -20,8 +20,8 @@ class RedisQueueTest extends \PHPUnit\Framework\TestCase
         }
         $this->queue = new \Jenner\SimpleFork\Queue\RedisQueue();
         $this->assertTrue($this->queue->put('test'));
-        $this->assertEquals($this->queue->get(), 'test');
-        $this->assertEquals($this->queue->size(), 0);
+        $this->assertEquals('test', $this->queue->get());
+        $this->assertEquals(0, $this->queue->size());
         $this->queue->close();
     }
 
@@ -38,8 +38,8 @@ class RedisQueueTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->wait();
         $queue = new \Jenner\SimpleFork\Queue\RedisQueue();
-        $this->assertEquals($queue->size(), 1);
-        $this->assertEquals($queue->get(), 'test');
+        $this->assertEquals(1, $queue->size());
+        $this->assertEquals('test', $queue->get());
         $queue->close();
     }
 

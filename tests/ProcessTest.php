@@ -41,7 +41,7 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         }
 
         $process = new \Jenner\SimpleFork\Process(function () {
-            sleep(2);
+            sleep(3);
         });
         $time = time();
         $process->start();

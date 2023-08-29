@@ -43,9 +43,11 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $process = new \Jenner\SimpleFork\Process(function () {
             sleep(3);
         });
-        $time = time();
         $process->start();
         $process->shutdown(SIGKILL);
+
+        sleep(3);
+
         $this->assertFalse($process->isRunning());
         $this->assertTrue($process->ifSignal());
         $this->assertEquals(0, $process->errno());

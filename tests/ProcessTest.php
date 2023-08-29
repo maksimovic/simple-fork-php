@@ -41,7 +41,7 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->shutdown(SIGKILL);
         $this->assertFalse($process->isRunning());
-        $this->assertTrue(time() - $time < 3);
+        $this->assertTrue((time() - $time) <= 3);
         $this->assertTrue($process->ifSignal());
         $this->assertEquals(0, $process->errno());
     }

@@ -41,7 +41,9 @@ class FileLock implements LockInterface
         }
         $this->fp = fopen($file, "r+");
         if (!is_resource($this->fp)) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException("open {$file} failed");
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -90,11 +92,12 @@ class FileLock implements LockInterface
      */
     public function isLocked()
     {
-        return $this->locked === true ? true : false;
+        return $this->locked === true;
     }
 
     /**
-     *
+     * @deprecated
+     * @codeCoverageIgnore
      */
     public function __destory()
     {
@@ -117,7 +120,9 @@ class FileLock implements LockInterface
         $unlock = flock($this->fp, LOCK_UN);
         fclose($this->fp);
         if ($unlock !== true) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->locked = false;
 

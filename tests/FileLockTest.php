@@ -26,7 +26,9 @@ class FileLockTest extends \PHPUnit\Framework\TestCase
     public function testLock()
     {
         $this->assertTrue($this->lock->acquire());
+        $this->assertTrue($this->lock->isLocked());
         $this->assertTrue($this->lock->release());
+        $this->assertFalse($this->lock->isLocked());
     }
 
     public function testAcquireException()
@@ -44,22 +46,28 @@ class FileLockTest extends \PHPUnit\Framework\TestCase
 
     public function testCommunication()
     {
-        $lock_file = "/tmp/simple-fork.lock";
-        if (!file_exists($lock_file)) {
-            touch($lock_file);
-        }
+        $lock_file = "/tmp/".tempnam("/tmp", "simple-fork.lock");
+        touch($lock_file);
+
         $process = new \Jenner\SimpleFork\Process(function () use ($lock_file) {
             $lock = \Jenner\SimpleFork\Lock\FileLock::create($lock_file);
             $lock->acquire(false);
-            sleep(5);
+            sleep(3);
             $lock->release();
         });
+
         $process->start();
-        sleep(3);
+        sleep(1);
         $lock = \Jenner\SimpleFork\Lock\FileLock::create($lock_file);
         $this->assertFalse($lock->acquire(false));
         $process->wait();
         $this->assertTrue($lock->acquire(false));
         $this->assertTrue($lock->release());
+    }
+
+    public function testLockNonExistingFile()
+    {
+        $this->expectException(RuntimeException::class);
+        \Jenner\SimpleFork\Lock\FileLock::create("whatever");
     }
 }

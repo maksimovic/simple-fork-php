@@ -35,7 +35,9 @@ class Semaphore implements LockInterface
     private function __construct($key, $count = 1)
     {
         if (($this->lock_id = sem_get($this->_stringToSemKey($key), $count)) === false) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException("Cannot create semaphore for key: {$key}");
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -101,7 +103,9 @@ class Semaphore implements LockInterface
         }
 
         if (!sem_release($this->lock_id)) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->locked = false;
 
@@ -121,9 +125,6 @@ class Semaphore implements LockInterface
         }
 
         if ($blocking === false) {
-            if (version_compare(PHP_VERSION, '5.6.0') < 0) {
-                throw new \RuntimeException('php version is at least 5.6.0 for param blocking');
-            }
             if (!sem_acquire($this->lock_id, true)) {
                 return false;
             }
@@ -133,7 +134,9 @@ class Semaphore implements LockInterface
         }
 
         if (!sem_acquire($this->lock_id)) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->locked = true;
 
@@ -154,10 +157,13 @@ class Semaphore implements LockInterface
             throw new \RuntimeException('can not remove a empty semaphore resource');
         }
 
+        // @codeCoverageIgnoreStart
+        // seems impossible to reproduce further below
         if (!sem_release($this->lock_id)) {
             return false;
         }
 
         return true;
+        // @codeCoverageIgnoreEnd
     }
 }

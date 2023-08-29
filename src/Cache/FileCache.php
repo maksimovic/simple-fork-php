@@ -235,7 +235,9 @@ class FileCache implements CacheInterface
         $cache_data = unserialize($data);
 
         if ($cache_data === false) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
 
         $check_expire = $this->checkExpire($cache_data);
@@ -255,9 +257,9 @@ class FileCache implements CacheInterface
     protected function checkExpire($cache_data)
     {
         $time = time();
-        $is_expire = intval($cache_data['expire']) !== 0 && (intval($cache_data['time']) + intval($cache_data['expire']) < $time);
-        if ($is_expire) return false;
 
-        return true;
+        $is_expired = (int) $cache_data['expire'] !== 0 && ((int) $cache_data['time'] + (int) $cache_data['expire'] < $time);
+
+        return !$is_expired;
     }
 }

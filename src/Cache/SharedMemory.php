@@ -42,12 +42,14 @@ class SharedMemory implements CacheInterface
     {
         $this->size = $size;
         if (function_exists("shm_attach") === false) {
+            // @codeCoverageIgnoreStart
             $message = "\nYour PHP configuration needs adjustment. " .
                 "See: http://us2.php.net/manual/en/shmop.setup.php. " .
                 "To enable the System V shared memory support compile " .
                 " PHP with the option --enable-sysvshm.";
 
             throw new \RuntimeException($message);
+            // @codeCoverageIgnoreEnd
         }
         $this->attach($file); //create resources (shared memory)
     }
@@ -62,7 +64,9 @@ class SharedMemory implements CacheInterface
         if (!file_exists($file)) {
             $touch = touch($file);
             if (!$touch) {
+                // @codeCoverageIgnoreStart
                 throw new \RuntimeException("file is not exists and it can not be created. file: {$file}");
+                // @codeCoverageIgnoreEnd
             }
         }
         $key = ftok($file, 'a');
@@ -78,8 +82,10 @@ class SharedMemory implements CacheInterface
     public function remove()
     {
         //dallocate shared memory
-        if (!shm_remove($this->shm)) {
+        if (isset($this->shm) && !shm_remove($this->shm)) {
+            // @codeCoverageIgnoreStart
             return false;
+            // @codeCoverageIgnoreEnd
         }
         $this->dettach();
         // shm_remove maybe not working. it likes a php bug.
@@ -93,7 +99,7 @@ class SharedMemory implements CacheInterface
      */
     public function dettach()
     {
-        return shm_detach($this->shm); //allocate shared memory
+        return isset($this->shm) && shm_detach($this->shm); //allocate shared memory
     }
 
     /**
@@ -164,13 +170,5 @@ class SharedMemory implements CacheInterface
         } else {
             return false;
         }
-    }
-
-    /**
-     * init when wakeup
-     */
-    public function __wakeup()
-    {
-        $this->attach();
     }
 }

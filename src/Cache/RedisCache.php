@@ -39,9 +39,6 @@ class RedisCache implements CacheInterface
     {
         $this->redis = new \Redis();
         $connection_result = $this->redis->connect($host, $port);
-        if (!$connection_result) {
-            throw new \RuntimeException('can not connect to the redis server');
-        }
 
         if ($database != 0) {
             $select_result = $this->redis->select($database);

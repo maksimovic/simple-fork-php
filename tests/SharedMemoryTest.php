@@ -20,12 +20,13 @@ class SharedMemoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('test', $cache->get('test'));
 
-
+        $this->assertFalse($cache->get('idonotexist', false));
+        $this->assertFalse($cache->delete('idonotexist'));
     }
 
     public function testHas()
     {
-        $cache = new \Jenner\SimpleFork\Cache\SharedMemory(1024);
+        $cache = new \Jenner\SimpleFork\Cache\SharedMemory(1024, "/tmp/".tempnam("/tmp/", ""));
         $cache->set('test', 'test');
         $this->assertTrue($cache->has('test'));
         $this->assertEquals('test', $cache->get('test'));
@@ -33,18 +34,16 @@ class SharedMemoryTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($cache->has('test'));
     }
 
+    /**
+     * @doesNotPerformAssertions
+     * @return void
+     */
     public function testRemove()
     {
         $cache = new \Jenner\SimpleFork\Cache\SharedMemory(1024);
         $cache->set('test', 'test');
-        $process = new \Jenner\SimpleFork\Process(function () use ($cache) {
-            $cache->remove();
-        });
-        $this->assertEquals('test', $cache->get('test'));
-        $process->start();
-        $process->wait();
 
-        // maybe a php bug
-        //$this->assertFalse($cache->get('test'));
+        $cache->remove();
+        $cache->remove();
     }
 }

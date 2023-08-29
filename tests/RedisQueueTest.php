@@ -43,4 +43,17 @@ class RedisQueueTest extends \PHPUnit\Framework\TestCase
         $queue->close();
     }
 
+    public function testRemove()
+    {
+        $queue = new \Jenner\SimpleFork\Queue\RedisQueue();
+        $queue->put("test");
+        $this->assertEquals(1, $queue->remove());
+        $queue->close();
+    }
+
+    public function tearDown(): void
+    {
+        (new \Jenner\SimpleFork\Queue\RedisQueue())->remove();
+    }
+
 }

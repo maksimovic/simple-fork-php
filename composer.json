@@ -1,5 +1,5 @@
 {
-  "name": "jenner/simple_fork",
+  "name": "maksimovic/simple-fork-php",
   "description": "simple multi process manager based on pcntl",
   "keywords": [
     "fork",

@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 /**
  * processes' pool
  *
@@ -21,7 +20,7 @@ abstract class AbstractPool
      *
      * @var Process[]
      */
-    protected $processes = array();
+    protected $processes = [];
 
     /**
      * get process by pid
@@ -29,7 +28,7 @@ abstract class AbstractPool
      * @param $pid
      * @return null|Process
      */
-    public function getProcessByPid($pid)
+    public function getProcessByPid($pid): ?Process
     {
         foreach ($this->processes as $process) {
             if ($process->getPid() == $pid) {
@@ -44,7 +43,7 @@ abstract class AbstractPool
      * shutdown sub process and no wait. it is dangerous,
      * maybe the sub process is working.
      */
-    public function shutdownForce()
+    public function shutdownForce(): void
     {
         $this->shutdown(SIGKILL);
     }
@@ -54,7 +53,7 @@ abstract class AbstractPool
      *
      * @param int $signal
      */
-    public function shutdown($signal = SIGTERM)
+    public function shutdown(int $signal = SIGTERM): void
     {
         foreach ($this->processes as $process) {
             if ($process->isRunning()) {
@@ -68,7 +67,7 @@ abstract class AbstractPool
      *
      * @return bool
      */
-    public function isFinished()
+    public function isFinished(): bool
     {
         foreach ($this->processes as $process) {
             if (!$process->isStopped()) {
@@ -85,7 +84,7 @@ abstract class AbstractPool
      * sub processes exit. else it will check if there are processes that had been exited once and return.
      * @param int $sleep when $block is true, it will check sub processes every $sleep minute
      */
-    public function wait($block = true, $sleep = 100)
+    public function wait(bool $block = true, int $sleep = 100)
     {
         do {
             foreach ($this->processes as $process) {
@@ -102,7 +101,7 @@ abstract class AbstractPool
      *
      * @return int
      */
-    public function aliveCount()
+    public function aliveCount(): int
     {
         $count = 0;
         foreach ($this->processes as $process) {
@@ -120,10 +119,10 @@ abstract class AbstractPool
      * @param string $name process name
      * @return Process|null
      */
-    public function getProcessByName($name)
+    public function getProcessByName(string $name): ?Process
     {
         foreach ($this->processes as $process) {
-            if ($process->name() == $name) {
+            if ($process->name() === $name) {
                 return $process;
             }
         }
@@ -134,13 +133,13 @@ abstract class AbstractPool
     /**
      * remove process by name
      *
-     * @param string $name process name
+     * @param string $name $name
      * @throws \RuntimeException
      */
-    public function removeProcessByName($name)
+    public function removeProcessByName(string $name): void
     {
         foreach ($this->processes as $key => $process) {
-            if ($process->name() == $name) {
+            if ($process->name() === $name) {
                 if ($process->isRunning()) {
                     throw new \RuntimeException("can not remove a running process");
                 }
@@ -152,7 +151,7 @@ abstract class AbstractPool
     /**
      * remove exited process
      */
-    public function removeExitedProcess()
+    public function removeExitedProcess(): void
     {
         foreach ($this->processes as $key => $process) {
             if ($process->isStopped()) {
@@ -166,7 +165,7 @@ abstract class AbstractPool
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->processes);
     }
@@ -176,7 +175,7 @@ abstract class AbstractPool
      *
      * @return Process[]
      */
-    public function getProcesses()
+    public function getProcesses(): array
     {
         return $this->processes;
     }

@@ -8,33 +8,11 @@
 
 namespace Jenner\SimpleFork\Lock;
 
-
-/**
- * lock for processes to mutual exclusion
- *
- * @package Jenner\SimpleFork\Lock
- */
 interface LockInterface
 {
-    /**
-     * get a lock
-     *
-     * @param bool $blocking
-     * @return bool
-     */
-    public function acquire($blocking = true);
+    public function acquire(bool $blocking = true): bool;
 
-    /**
-     * release lock
-     *
-     * @return bool
-     */
-    public function release();
+    public function release(): bool;
 
-    /**
-     * is locked
-     *
-     * @return bool
-     */
-    public function isLocked();
+    public function isLocked(): bool;
 }

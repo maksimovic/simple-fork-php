@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 class PoolFactory
 {
     /**
@@ -16,7 +15,7 @@ class PoolFactory
      *
      * @return Pool
      */
-    public static function newPool()
+    public static function newPool(): Pool
     {
         return new Pool();
     }
@@ -27,7 +26,7 @@ class PoolFactory
      * @param int $max
      * @return FixedPool
      */
-    public static function newFixedPool($max = 4)
+    public static function newFixedPool(int $max = 4): FixedPool
     {
         return new FixedPool($max);
     }
@@ -35,11 +34,11 @@ class PoolFactory
     /**
      * create a parallel pool instance
      *
-     * @param $callback
+     * @param callable|Runnable $callback
      * @param int $max
      * @return ParallelPool
      */
-    public static function newParallelPool($callback, $max = 4)
+    public static function newParallelPool($callback, int $max = 4): ParallelPool
     {
         return new ParallelPool($callback, $max);
     }
@@ -49,7 +48,7 @@ class PoolFactory
      *
      * @return SinglePool
      */
-    public static function newSinglePool()
+    public static function newSinglePool(): SinglePool
     {
         return new SinglePool();
     }

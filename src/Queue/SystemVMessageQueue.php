@@ -22,7 +22,7 @@ class SystemVMessageQueue implements QueueInterface
     protected $msg_type;
 
     /**
-     * @var
+     * @var false|resource|\SysvMessageQueue
      */
     protected $queue;
 
@@ -47,7 +47,7 @@ class SystemVMessageQueue implements QueueInterface
     protected $maxsize;
 
     /**
-     * @var
+     * @var int
      */
     protected $key_t;
 
@@ -68,12 +68,12 @@ class SystemVMessageQueue implements QueueInterface
      * @param int $maxsize the max size of queue
      */
     public function __construct(
-        $ipc_filename = __FILE__,
-        $channel = 1,
-        $serialize_needed = true,
-        $block_send = true,
-        $option_receive = MSG_IPC_NOWAIT,
-        $maxsize = 100000
+        string $ipc_filename = __FILE__,
+        int $channel = 1,
+        bool $serialize_needed = true,
+        bool $block_send = true,
+        int $option_receive = MSG_IPC_NOWAIT,
+        int $maxsize = 100000
     )
     {
         $this->ipc_filename = $ipc_filename;
@@ -126,9 +126,9 @@ class SystemVMessageQueue implements QueueInterface
      * get message
      *
      * @param bool $block if block when the queue is empty
-     * @return bool|string
+     * @return mixed
      */
-    public function get($block = false)
+    public function get(bool $block = false)
     {
         $queue_status = $this->status();
         if ($queue_status['msg_qnum'] > 0) {
@@ -180,13 +180,13 @@ class SystemVMessageQueue implements QueueInterface
     /**
      * put message
      *
-     * @param $message
+     * @param $value
      * @return bool
      * @throws \Exception
      */
-    public function put($message)
+    public function put($value): bool
     {
-        if (\msg_send($this->queue, $this->msg_type, $message, $this->serialize_needed, $this->block_send, $err)) {
+        if (\msg_send($this->queue, $this->msg_type, $value, $this->serialize_needed, $this->block_send, $err)) {
             return true;
         }
 
@@ -215,7 +215,7 @@ class SystemVMessageQueue implements QueueInterface
      * @param int $value status value
      * @return bool
      */
-    public function setStatus($key, $value)
+    public function setStatus(string $key, $value): bool
     {
         $this->checkSetPrivilege($key);
 
@@ -225,7 +225,9 @@ class SystemVMessageQueue implements QueueInterface
             // @codeCoverageIgnoreEnd
         }
 
-        $queue_status[$key] = $value;
+        $queue_status = [
+            $key => $value
+        ];
 
         return \msg_set_queue($this->queue, $queue_status);
     }

@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 /**
  * fixed pool
  *
@@ -21,22 +20,20 @@ class FixedPool extends AbstractPool
      */
     protected $max;
 
-    /**
-     * @param int $max
-     */
-    public function __construct($max = 4)
+    public function __construct(int $max = 4)
     {
         $this->max = $max;
     }
 
-    public function execute(Process $process)
+    public function execute(Process $process): void
     {
         Utils::checkOverwriteRunMethod(get_class($process));
 
         if ($this->aliveCount() < $this->max && !$process->isStarted()) {
             $process->start();
         }
-        array_push($this->processes, $process);
+
+        $this->processes[] = $process;
     }
 
     /**
@@ -44,9 +41,9 @@ class FixedPool extends AbstractPool
      *
      * @param bool $block block the master process
      * to keep the sub process count all the time
-     * @param int $interval check time interval
+     * @param int $sleep check time interval
      */
-    public function wait($block = false, $interval = 100)
+    public function wait(bool $block = false, $sleep = 100)
     {
         do {
             if ($this->isFinished()) {
@@ -60,7 +57,7 @@ class FixedPool extends AbstractPool
                     if ($this->aliveCount() >= $this->max) break;
                 }
             }
-            $block ? usleep($interval) : null;
+            $block ? usleep($sleep) : null;
         } while ($block);
     }
 

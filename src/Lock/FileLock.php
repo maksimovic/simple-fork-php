@@ -31,10 +31,7 @@ class FileLock implements LockInterface
      */
     protected $locked = false;
 
-    /**
-     * @param $file
-     */
-    private function __construct($file)
+    private function __construct(string $file)
     {
         if (!file_exists($file) || !is_readable($file)) {
             throw new \RuntimeException("{$file} is not exists or not readable");
@@ -54,7 +51,7 @@ class FileLock implements LockInterface
      * @param string $file lock file
      * @return FileLock
      */
-    public static function create($file)
+    public static function create(string $file): FileLock
     {
         return new FileLock($file);
     }
@@ -63,9 +60,9 @@ class FileLock implements LockInterface
      * get a lock
      *
      * @param bool $blocking
-     * @return mixed
+     * @return bool
      */
-    public function acquire($blocking = true)
+    public function acquire(bool $blocking = true): bool
     {
         if ($this->locked) {
             throw new \RuntimeException('already lock by yourself');
@@ -88,9 +85,9 @@ class FileLock implements LockInterface
     /**
      * is locked
      *
-     * @return mixed
+     * @return bool
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked === true;
     }
@@ -109,9 +106,9 @@ class FileLock implements LockInterface
     /**
      * release lock
      *
-     * @return mixed
+     * @return bool
      */
-    public function release()
+    public function release(): bool
     {
         if (!$this->locked) {
             throw new \RuntimeException('release a non lock');

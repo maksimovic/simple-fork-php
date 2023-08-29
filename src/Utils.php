@@ -7,7 +7,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 class Utils
 {
     /**
@@ -15,20 +14,16 @@ class Utils
      *
      * @param $child_class
      */
-    public static function checkOverwriteRunMethod($child_class)
+    public static function checkOverwriteRunMethod($child_class): void
     {
         $parent_class = Process::class;
-        if ($child_class == $parent_class) {
-            $message = "you should extend the `{$parent_class}`" .
-                ' and overwrite the run method';
-            throw new \RuntimeException($message);
+        if ($child_class === $parent_class) {
+            throw new \RuntimeException("you should extend the `{$parent_class}` and overwrite the run method");
         }
 
         $child = new \ReflectionClass($child_class);
         if ($child->getParentClass() === false) {
-            $message = "you should extend the `{$parent_class}`" .
-                ' and overwrite the run method';
-            throw new \RuntimeException($message);
+            throw new \RuntimeException("you should extend the `{$parent_class}` and overwrite the run method");
         }
 
         $parent_methods = $child->getParentClass()->getMethods(\ReflectionMethod::IS_PUBLIC);

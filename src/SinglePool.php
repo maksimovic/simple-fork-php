@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork;
 
-
 /**
  * Only one process will be started at the same time
  *

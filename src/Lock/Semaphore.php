@@ -8,7 +8,6 @@
 
 namespace Jenner\SimpleFork\Lock;
 
-
 /**
  * sem lock
  *
@@ -16,10 +15,8 @@ namespace Jenner\SimpleFork\Lock;
  */
 class Semaphore implements LockInterface
 {
-    /**
-     * @var
-     */
     private $lock_id;
+
     /**
      * @var bool
      */
@@ -28,11 +25,11 @@ class Semaphore implements LockInterface
     /**
      * init a lock
      *
-     * @param $key
-     * @param $count
+     * @param string $key
+     * @param int $count
      * @throws \RuntimeException
      */
-    private function __construct($key, $count = 1)
+    private function __construct(string $key, int $count = 1)
     {
         if (($this->lock_id = sem_get($this->_stringToSemKey($key), $count)) === false) {
             // @codeCoverageIgnoreStart
@@ -85,7 +82,7 @@ class Semaphore implements LockInterface
      *
      * @return bool
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked === true ? true : false;
     }
@@ -96,7 +93,7 @@ class Semaphore implements LockInterface
      * @return bool
      * @throws \RuntimeException
      */
-    public function release()
+    public function release(): bool
     {
         if (!$this->locked) {
             throw new \RuntimeException("release a non lock");
@@ -118,7 +115,7 @@ class Semaphore implements LockInterface
      * @param bool $blocking
      * @return bool
      */
-    public function acquire($blocking = true)
+    public function acquire(bool $blocking = true): bool
     {
         if ($this->locked) {
             throw new \RuntimeException('already lock by yourself');
@@ -146,6 +143,7 @@ class Semaphore implements LockInterface
     /**
      * remove the semaphore resource
      *
+     * @suppress PhanTypeMismatchArgumentInternalReal
      * @return bool
      */
     public function remove()

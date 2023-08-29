@@ -1,16 +1,11 @@
 SimpleFork
 ===================
 
-[![Join the chat at https://gitter.im/huyanping/simple-fork-php](https://badges.gitter.im/huyanping/simple-fork-php.svg)](https://gitter.im/huyanping/simple-fork-php?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Latest Stable Version](https://poser.pugx.org/jenner/simple_fork/v/stable)](https://packagist.org/packages/jenner/simple_fork) 
-[![Total Downloads](https://poser.pugx.org/jenner/simple_fork/downloads)](https://packagist.org/packages/jenner/simple_fork) 
-[![Latest Unstable Version](https://poser.pugx.org/jenner/simple_fork/v/unstable)](https://packagist.org/packages/jenner/simple_fork) 
-[![License](https://poser.pugx.org/jenner/simple_fork/license)](https://packagist.org/packages/jenner/simple_fork) 
-[![travis](https://travis-ci.org/huyanping/simple-fork-php.svg)](https://travis-ci.org/huyanping/simple-fork-php)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/huyanping/simple-fork-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/huyanping/simple-fork-php/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/huyanping/simple-fork-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/huyanping/simple-fork-php/?branch=master)
+This is a fork of `jenner/simple_fork` compatible with PHP 7.2/3/4/ and 8.0/1/2
 
-[中文README.MD](https://github.com/huyanping/simple-fork-php/blob/master/README.ZH.MD)  
+[![codecov](https://codecov.io/github/maksimovic/simple-fork-php/graph/badge.svg?token=9kZkI3EaGv)](https://codecov.io/github/maksimovic/simple-fork-php)
+![build status](https://github.com/maksimovic/simple-fork-php/actions/workflows/ci.yml/badge.svg)
+ 
 Simple Fork Framework is based on PCNTL extension, the interfaces are like `Thread` and `Runnable` in Java.
 
 Why SimpleFork
@@ -21,17 +16,13 @@ SimpleFork framework provide several interfaces which like Java `Thread` and sol
 Require
 ---------------------
 ```bash
-composer require jenner/simple_fork
-```
-Or
-```php
-require '/path/to/simple-fork-php/autoload.php'
+composer require maksimovic/simple-fork-php
 ```
 
 Dependencies
 ----------------------
 must  
-+ php > 5.3.0
++ php >= 7.2
 + ext-pcntl process control 
 
 optional
@@ -89,8 +80,7 @@ method of the sub process is called, it will register the signal
 handler automatically.
 
 Examples
--------------------------
-More examples in [examples](https://github.com/huyanping/simple-fork-php/tree/master/examples examples) dictionary  
+------------------------- 
 **A simple example.**  
 ```php
 class TestRunnable implements \Jenner\SimpleFork\Runnable{

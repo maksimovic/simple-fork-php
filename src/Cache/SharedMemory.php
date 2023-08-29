@@ -88,8 +88,8 @@ class SharedMemory implements CacheInterface
             // @codeCoverageIgnoreEnd
         }
         $this->dettach();
-        // shm_remove maybe not working. it likes a php bug.
-        unset($this->shm);
+
+        $this->shm = null;
 
         return true;
     }
@@ -105,11 +105,11 @@ class SharedMemory implements CacheInterface
     /**
      * set var
      *
-     * @param $key
+     * @param string $key
      * @param $value
      * @return bool
      */
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         return shm_put_var($this->shm, $this->shm_key($key), $value); //store var
     }
@@ -129,17 +129,17 @@ class SharedMemory implements CacheInterface
     /**
      * get var
      *
-     * @param $key
-     * @param null $default
-     * @return bool|mixed
+     * @param string $key
+     * @param null|mixed $default
+     * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         if ($this->has($key)) {
             return shm_get_var($this->shm, $this->shm_key($key));
-        } else {
-            return $default;
         }
+
+        return $default;
     }
 
     /**
@@ -148,7 +148,7 @@ class SharedMemory implements CacheInterface
      * @param $key
      * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         if (shm_has_var($this->shm, $this->shm_key($key))) { // check is isset
             return true;
@@ -160,15 +160,15 @@ class SharedMemory implements CacheInterface
     /**
      * delete var
      *
-     * @param $key
+     * @param string $key
      * @return bool
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         if ($this->has($key)) {
             return shm_remove_var($this->shm, $this->shm_key($key));
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

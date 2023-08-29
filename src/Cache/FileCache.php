@@ -8,23 +8,17 @@
 
 namespace Jenner\SimpleFork\Cache;
 
-
 class FileCache implements CacheInterface
 {
-
     /**
-     * 缓存目录
-     * @var
+     * @var string
      */
     private $cache_dir;
 
-    /**
-     * @param string $cache_dir
-     * @throws \Exception
-     */
-    public function __construct($cache_dir)
+    public function __construct(string $cache_dir)
     {
         $this->cache_dir = $cache_dir;
+
         if (!is_dir($cache_dir)) {
             $make_dir_result = mkdir($cache_dir, 0755, true);
             if ($make_dir_result === false) throw new \Exception('Cannot create the cache directory');
@@ -34,11 +28,12 @@ class FileCache implements CacheInterface
 
     /**
      * get value by key, and check if it is expired
+     *
      * @param string $key
      * @param string $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         $cache_data = $this->getItem($key);
         if ($cache_data === false || !is_array($cache_data)) return $default;
@@ -47,26 +42,24 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 添加或覆盖一个key
      * @param string $key
      * @param mixed $value
-     * @param int $expire expire time in seconds
+     * @param int $expire
      * @return mixed
      */
-    public function set($key, $value, $expire = 0)
+    public function set(string $key, $value, int $expire = 0)
     {
         return $this->setItem($key, $value, time(), $expire);
     }
 
     /**
-     * 设置包含元数据的信息
      * @param $key
      * @param $value
      * @param $time
      * @param $expire
      * @return bool
      */
-    private function setItem($key, $value, $time, $expire)
+    private function setItem($key, $value, $time, int $expire)
     {
         $cache_file = $this->createCacheFile($key);
         if ($cache_file === false) return false;
@@ -81,7 +74,6 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 创建缓存文件
      * @param $key
      * @return bool|string
      */
@@ -102,11 +94,10 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 判断Key是否存在
      * @param $key
-     * @return mixed
+     * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
         $value = $this->get($key);
         if ($value === false) return false;
@@ -115,12 +106,13 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 加法递增
+     * @suppress PhanTypeMismatchDimAssignment
+     *
      * @param $key
      * @param int $value
      * @return mixed
      */
-    public function increment($key, $value = 1)
+    public function increment($key, int $value = 1)
     {
         $item = $this->getItem($key);
         if ($item === false) {
@@ -141,7 +133,7 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 减法递增
+     * @suppress PhanTypeMismatchDimAssignment
      * @param $key
      * @param int $value
      * @return mixed
@@ -168,11 +160,10 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 删除一个key，同事会删除缓存文件
-     * @param $key
+     * @param string $key
      * @return boolean
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $cache_file = $this->path($key);
         if (file_exists($cache_file)) {
@@ -183,21 +174,16 @@ class FileCache implements CacheInterface
         return true;
     }
 
-    /**
-     * 清楚所有缓存
-     * @return mixed
-     */
-    public function flush()
+    public function flush(): bool
     {
         return $this->delTree($this->cache_dir);
     }
 
     /**
-     * 递归删除目录
-     * @param $dir
+     * @param string $dir
      * @return bool
      */
-    function delTree($dir)
+    function delTree(string $dir): bool
     {
         $files = array_diff(scandir($dir), array('.', '..'));
         foreach ($files as $file) {
@@ -207,19 +193,16 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 根据key获取缓存文件路径
-     *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
-    protected function path($key)
+    protected function path(string $key): string
     {
         $parts = array_slice(str_split($hash = md5($key), 2), 0, 2);
         return $this->cache_dir . '/' . implode('/', $parts) . '/' . $hash;
     }
 
     /**
-     * 获取含有元数据的信息
      * @param $key
      * @return bool|mixed|string
      */
@@ -231,7 +214,9 @@ class FileCache implements CacheInterface
         }
 
         $data = file_get_contents($cache_file);
+
         if (empty($data)) return false;
+
         $cache_data = unserialize($data);
 
         if ($cache_data === false) {
@@ -250,11 +235,10 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * 检查key是否过期
-     * @param $cache_data
+     * @param array $cache_data
      * @return bool
      */
-    protected function checkExpire($cache_data)
+    protected function checkExpire(array $cache_data): bool
     {
         $time = time();
 

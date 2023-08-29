@@ -72,25 +72,18 @@ class RedisQueue implements QueueInterface
      * @param $value
      * @return bool
      */
-    public function put($value)
+    public function put($value): bool
     {
-
-        if ($this->redis->lPush($this->channel, $value) !== false) {
-            return true;
-        }
-
-        // @codeCoverageIgnoreStart
-        return false;
-        // @codeCoverageIgnoreEnd
+        return $this->redis->lPush($this->channel, $value) !== false;
     }
 
     /**
      * get value from the queue
      *
      * @param bool $block if block when the queue is empty
-     * @return bool|string
+     * @return mixed
      */
-    public function get($block = false)
+    public function get(bool $block = false)
     {
         if (!$block) {
             return $this->redis->rPop($this->channel);

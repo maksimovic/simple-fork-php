@@ -41,10 +41,7 @@ class RedisQueue implements QueueInterface
     )
     {
         $this->redis = new \Redis();
-        $connection_result = $this->redis->connect($host, $port);
-        if (!$connection_result) {
-            throw new \RuntimeException('can not connect to the redis server');
-        }
+        $this->redis->connect($host, $port);
 
         if ($database != 0) {
             $select_result = $this->redis->select($database);
@@ -63,7 +60,9 @@ class RedisQueue implements QueueInterface
 
         $set_option_result = $this->redis->setOption(\Redis::OPT_PREFIX, $prefix);
         if (!$set_option_result) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('can not set the \Redis::OPT_PREFIX Option');
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -80,7 +79,9 @@ class RedisQueue implements QueueInterface
             return true;
         }
 
+        // @codeCoverageIgnoreStart
         return false;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -93,17 +94,20 @@ class RedisQueue implements QueueInterface
     {
         if (!$block) {
             return $this->redis->rPop($this->channel);
-        } else {
-            while (true) {
-                $record = $this->redis->rPop($this->channel);
-                if ($record === false) {
-                    usleep(1000);
-                    continue;
-                }
-
-                return $record;
-            }
         }
+
+        // can't reproduce via tests
+        // @codeCoverageIgnoreStart
+        while (true) {
+            $record = $this->redis->rPop($this->channel);
+            if ($record === false) {
+                usleep(1000);
+                continue;
+            }
+
+            return $record;
+        }
+        // @codeCoverageIgnoreEnd
     }
 
     /**

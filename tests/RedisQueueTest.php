@@ -51,6 +51,24 @@ class RedisQueueTest extends \PHPUnit\Framework\TestCase
         $queue->close();
     }
 
+    public function testCantConnect()
+    {
+        $this->expectException(RedisException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 1234);
+    }
+
+    public function testCantSelectDatabase(): void
+    {
+        $this->expectException(RuntimeException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 6379, -1);
+    }
+
+    public function testEmptyChannel(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new \Jenner\SimpleFork\Queue\RedisQueue('127.0.0.1', 6379, 0, '');
+    }
+
     public function tearDown(): void
     {
         (new \Jenner\SimpleFork\Queue\RedisQueue())->remove();

@@ -25,7 +25,7 @@ class PoolTest extends \PHPUnit\Framework\TestCase
         $pool = new \Jenner\SimpleFork\Pool();
         for ($i = 0; $i < 10; $i++) {
             $process = new \Jenner\SimpleFork\Process(function () {
-                sleep(3);
+                sleep(2);
             });
             $pool->execute($process, "process{$i}");
         }
@@ -33,7 +33,7 @@ class PoolTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(10, $pool->aliveCount());
         $pool->wait();
         $time = time() - $start;
-        $this->assertTrue($time >= 3);
+        $this->assertTrue($time >= 2);
         $this->assertEquals(0, $pool->aliveCount());
 
         $pool->removeProcessByName("process1");
@@ -45,14 +45,14 @@ class PoolTest extends \PHPUnit\Framework\TestCase
         $pool = new \Jenner\SimpleFork\Pool();
         for ($i = 0; $i < 10; $i++) {
             $process = new \Jenner\SimpleFork\Process(function () {
-                sleep(3);
+                sleep(2);
             });
             $pool->execute($process);
         }
         $start = time();
         $pool->shutdown();
         $time = time() - $start;
-        $this->assertTrue($time < 3);
+        $this->assertTrue($time < 2);
         $this->assertEquals(0, $pool->aliveCount());
     }
 

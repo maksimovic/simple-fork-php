@@ -13,12 +13,12 @@ class ParallelPoolTest extends \PHPUnit\Framework\TestCase
         $pool = new \Jenner\SimpleFork\ParallelPool(new ParallelPoolTestRunnable(), 10);
         $pool->start();
         $this->assertEquals(10, $pool->aliveCount());
-        sleep(4);
+        sleep(2);
         $this->assertEquals(0, $pool->aliveCount());
         $pool->keep();
         $this->assertEquals(10, $pool->count());
         $this->assertEquals(10, $pool->aliveCount());
-        $pool->wait(true);
+        $pool->wait();
     }
 
     public function testException()

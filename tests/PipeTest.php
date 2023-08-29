@@ -22,6 +22,7 @@ class PipeTest extends \PHPUnit\Framework\TestCase
         $pipe = new \Jenner\SimpleFork\Queue\Pipe();
         $this->assertEquals('test', $pipe->read());
         $process->wait(true);
+
         $pipe->close();
     }
 
@@ -38,6 +39,7 @@ class PipeTest extends \PHPUnit\Framework\TestCase
         $process->start();
         $process->wait(true);
         $pipe->close();
+        $pipe->remove();
     }
 
     public function testBlock()
@@ -55,6 +57,12 @@ class PipeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test', $pipe->read(4));
         $end = time();
         $this->assertTrue(($end - $start) >= 1);
+
+        $pipe->setBlock(true);
+
+        $pipe->write("hello");
+        $pipe->setBlock(true);
+
         $process->wait(true);
     }
 }

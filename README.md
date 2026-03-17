@@ -11,6 +11,7 @@ This is a fork of `jenner/simple_fork` compatible with these PHP versions:
 - 8.2
 - 8.3
 - 8.4
+- 8.5
 
 [![codecov](https://codecov.io/github/maksimovic/simple-fork-php/graph/badge.svg?token=9kZkI3EaGv)](https://codecov.io/github/maksimovic/simple-fork-php)
 ![build status](https://github.com/maksimovic/simple-fork-php/actions/workflows/ci.yml/badge.svg)

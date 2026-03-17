@@ -34,7 +34,7 @@ class FileCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($cache->delete($key));
         $this->assertNull($cache->get($key));
         $this->assertTrue($cache->flush());
-        $this->assertFileDoesNotExist($path);
+        $this->assertFalse(file_exists($path));
     }
 
     /**

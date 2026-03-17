@@ -75,7 +75,7 @@ class Process
      * @param string|callable|null $execution it can be a Runnable object, callback function or null
      * @param string|null $name process name,you can manager the process by it's name.
      */
-    public function __construct($execution = null, string $name = null)
+    public function __construct($execution = null, ?string $name = null)
     {
         if ($execution instanceof Runnable) {
             $this->runnable = $execution;

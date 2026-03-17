@@ -23,6 +23,13 @@ class PipeQueueTest extends \PHPUnit\Framework\TestCase
 		$queue->remove();
     }
 
+	public function testGetFromEmptyQueue()
+	{
+		$queue = new \Jenner\SimpleFork\Queue\PipeQueue();
+		$this->assertNull($queue->get());
+		$queue->remove();
+	}
+
 	public function testValueTooLong()
 	{
 		$memory_limit = ini_get('memory_limit');

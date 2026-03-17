@@ -76,6 +76,15 @@ class SemaphoreTest extends \PHPUnit\Framework\TestCase
         $this->lock->acquire(false);
         $this->lock->release();
 
+        $this->assertTrue($this->lock->remove());
+    }
+
+    public function testRemoveAlreadyRemovedSemaphore()
+    {
+        $this->lock->acquire(false);
+        $this->lock->release();
+        $this->lock->remove();
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("can not remove a empty semaphore resource");
         $this->lock->remove();

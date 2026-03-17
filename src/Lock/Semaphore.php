@@ -15,6 +15,7 @@ namespace Jenner\SimpleFork\Lock;
  */
 class Semaphore implements LockInterface
 {
+	/** @var false|resource|\SysvSemaphore */
     private $lock_id;
 
     /**
@@ -151,6 +152,13 @@ class Semaphore implements LockInterface
         if ($this->locked) {
             throw new \RuntimeException('can not remove a locked semaphore resource');
         }
-        throw new \RuntimeException('can not remove a empty semaphore resource');
-    }
+
+		if (is_resource($this->lock_id) || $this->lock_id instanceof \SysvSemaphore) {
+			$result = sem_remove($this->lock_id);
+			$this->lock_id = null;
+			return $result;
+		}
+
+		throw new \RuntimeException('can not remove a empty semaphore resource');
+	}
 }

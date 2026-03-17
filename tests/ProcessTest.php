@@ -115,6 +115,42 @@ class ProcessTest extends \PHPUnit\Framework\TestCase
         new \Jenner\SimpleFork\Process("abc");
     }
 
+    public function testGetPid(): void
+    {
+        $process = new \Jenner\SimpleFork\Process(function () {
+            usleep(100000);
+        });
+        $this->assertNull($process->getPid());
+        $process->start();
+        $this->assertIsInt($process->getPid());
+        $this->assertGreaterThan(0, $process->getPid());
+        $process->wait();
+    }
+
+    public function testName(): void
+    {
+        $process = new \Jenner\SimpleFork\Process(function () {}, 'my-process');
+        $this->assertEquals('my-process', $process->name());
+
+        $process->name('renamed');
+        $this->assertEquals('renamed', $process->name());
+    }
+
+    public function testIsStartedAndIsStopped(): void
+    {
+        $process = new \Jenner\SimpleFork\Process(function () {
+            usleep(100000);
+        });
+        $this->assertFalse($process->isStarted());
+        $this->assertFalse($process->isStopped());
+
+        $process->start();
+        $this->assertTrue($process->isStarted());
+
+        $process->wait();
+        $this->assertTrue($process->isStopped());
+    }
+
 }
 
 class MyThread extends \Jenner\SimpleFork\Process

@@ -1,7 +1,16 @@
 SimpleFork
 ===================
 
-This is a fork of `jenner/simple_fork` compatible with PHP 7.2/3/4/ and 8.0/1/2
+This is a fork of `jenner/simple_fork` compatible with these PHP versions:
+
+- 7.2
+- 7.3
+- 7.4
+- 8.0
+- 8.1
+- 8.2
+- 8.3
+- 8.4
 
 [![codecov](https://codecov.io/github/maksimovic/simple-fork-php/graph/badge.svg?token=9kZkI3EaGv)](https://codecov.io/github/maksimovic/simple-fork-php)
 ![build status](https://github.com/maksimovic/simple-fork-php/actions/workflows/ci.yml/badge.svg)
